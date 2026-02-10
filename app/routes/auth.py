@@ -14,9 +14,9 @@ def login():
 
         if username==USER_CREDENTIALS['username'] and password==USER_CREDENTIALS['password']:
             session['user']=username
-            flash('Login Successful', 'Success')
+            flash('Login Successful', 'success')
         else:
-            flash('Invalid username or password')
+            flash('Invalid username or password','danger')
     return render_template('login.html')
 
 @auth_bp.route('/logout')
