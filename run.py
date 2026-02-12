@@ -1,10 +1,8 @@
-from app import create_app, db
-from app.models import Task
+from app import create_app
+from app.db import ensure_schema
 
-app=create_app()
-
-with app.app_context():
-    db.create_all()
+app = create_app()
+ensure_schema()
 
 if __name__=="__main__":
     app.run(debug=True)

@@ -118,6 +118,18 @@ footer p{ margin: 0; }
     background: #ffffff;
 }
 
+.form-hint{
+    text-align: center;
+    margin-top: 12px;
+    color: var(--muted);
+}
+.form-hint a{
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+.form-hint a:hover{ text-decoration: underline; }
+
 /* Buttons */
 .btn{
     background-color: var(--primary);
