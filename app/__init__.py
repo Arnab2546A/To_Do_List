@@ -1,4 +1,5 @@
 from flask import Flask
+from app.db import ensure_schema
 
 def create_app():
     app = Flask(__name__)
@@ -8,5 +9,7 @@ def create_app():
     from app.routes.tasks import tasks_bp
     app.register_blueprint(auth_bp)
     app.register_blueprint(tasks_bp)
+
+    ensure_schema()
 
     return app

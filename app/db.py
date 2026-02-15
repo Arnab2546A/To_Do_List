@@ -10,30 +10,14 @@ if DATABASE_URL.startswith('postgres://'):
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL is not set. Example: postgresql://user:pass@localhost:5432/todo_db")
 
-# Ensure sslmode is set for Neon
-if 'sslmode' not in DATABASE_URL:
-    DATABASE_URL += '?sslmode=require' if '?' not in DATABASE_URL else '&sslmode=require'
-
-pool = None
-
-def get_pool():
-    global pool
-    if pool is None:
-        pool = SimpleConnectionPool(minconn=1, maxconn=10, dsn=DATABASE_URL)
-    return pool
+try:
+    pool = SimpleConnectionPool(minconn=1, maxconn=10, dsn=DATABASE_URL)
+except Exception as e:
+    raise RuntimeError(f"Failed to connect to PostgreSQL. Check DATABASE_URL. Details: {e}")
 
 @contextmanager
 def get_cursor():
-    p = get_pool()
-    conn = p.getconn()
-    try:
-        # Test if connection is still alive
-        conn.isolation_level
-    except psycopg2.OperationalError:
-        # Connection was closed, get a new one
-        p.putconn(conn, close=True)
-        conn = p.getconn()
-    
+    conn = pool.getconn()
     try:
         cur = conn.cursor()
         yield cur, conn
@@ -46,7 +30,7 @@ def get_cursor():
             cur.close()
         except Exception:
             pass
-        p.putconn(conn)
+        pool.putconn(conn)
 
 def ensure_schema():
     """Create tables if they do not exist."""
